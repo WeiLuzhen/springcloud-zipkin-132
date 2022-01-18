@@ -1,0 +1,53 @@
+#声明微服务的web服务器端口号
+server:
+  port: 9001
+
+#声明微服务的应用名称
+spring:
+  application:
+    name: microservice-user
+    
+  #设置数据源
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    #useSSL=false是通过通过账号和密码进行连接，useSSL=true是进行安全验证，一般通过证书或者令牌进行连接
+    url: jdbc:mysql://192.168.17.140:3306/jsd21132?charecterEncoding=utf-8&useSSL=false
+    username: root
+    password: 123456
+
+   #设置JPA正向工程
+  jpa:
+    #访问数据库产品
+    database: mysql
+    #生成建表语句，自动建表
+    generate-ddl: true
+    #显示sql语句
+    show-sql: true
+    
+  #微服务提供方user向zipkin服务器发送信息的配置
+  zipkin:
+    base-url: http://192.168.17.1:9041
+    sender:
+      type: web #给zipkin发送信息的sender的类型是web服务器，而不是RabibitMQ
+  #100%跟踪采样
+  sleuth:
+    sampler:
+      probability: 1
+#、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、、
+#eureka客户端
+eureka:
+  client:
+    #eureka客户端向eureka服务器注册
+    register-with-eureka: true
+    #向eureka服务器索要信息
+    fetch-registry: false
+    #注册服务的url
+    service-url:
+      defaultZone: http://192.168.17.1:8888/eureka
+  #///////////////////////////////////////////////////////////////////////////////////////////
+  #微服务的提供方与eureka服务器的约定
+  instance:
+    #每三十秒发送一次心跳
+    lease-renewal-interval-in-seconds: 30 #默认时间30秒
+    #租借到期时间是90秒（90秒内eureka服务器没有接收到一次心跳，表明注册的微服务失效，可以删除该微服务了）
+    lease-expiration-duration-in-seconds: 90 #默认是90秒
